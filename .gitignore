@@ -1,0 +1,8 @@
+# OMNeT++ / C++ Build Artifacts
+out/ *.o *.so *.a *~
+AdvancedNetworksProject
+# Simulation Results & Logs
+results/ *.vec *.sca *.vci *.elog *.pcap
+# configurations
+.vscode/ *.swp
+.DS_Store
