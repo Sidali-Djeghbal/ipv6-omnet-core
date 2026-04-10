@@ -1,7 +1,6 @@
+This repository contains the OMNeT++ simulation code and configuration files for the Advanced Networks project. the objective is to design, implement, and quantitatively analyze a medium-scale IPv6 network under congestion.
 
 ![OMNeT++](https://img.shields.io/badge/OMNeT++-Simulation-4B5563?style=flat-square&logo=cplusplus&logoColor=white) ![INET Framework](https://img.shields.io/badge/INET-Framework-F59E0B?style=flat-square&logo=databricks&logoColor=white) ![C++](https://img.shields.io/badge/C++-Backend-2563EB?style=flat-square&logo=cplusplus&logoColor=white) ![Status](https://img.shields.io/badge/Status-Active_Development-10B981?style=flat-square&logo=github&logoColor=white)
-
-This repository contains the OMNeT++ simulation code and configuration files for the Advanced Networks project. the objective is to design, implement, and quantitatively analyze a medium-scale IPv6 network under congestion.
 
 ---
 ##  OMNeT++ & `omnetpp.ini` Overview:
@@ -119,24 +118,24 @@ To avoid Git merge conflicts and ensure a fair workload distribution, we have di
     * **Steps:** Implement Stateless Address Autoconfiguration (SLAAC) so hosts dynamically obtain addresses from routers. Disable IPv4 globally in the `.ini`.
     * **Deliverables:** Configuration details and an analytical report section proving auto-configuration successfully populated routing tables without static IP assignment.
 
-* **Task 3: Dynamic Routing Engineer (RIPng)**
+* **Task 3: Dynamic Routing Specialist (RIPng)**
     * **Mission:** Implement Routing Information Protocol for IPv6.
     * **Steps:** Configure RIPng across the network routers. Simulate a link failure.
     * **Deliverables:** Extract data on routing convergence time. Generate charts analyzing protocol overhead and recovery speed.
 
-* **Task 4: Dynamic Routing Engineer (OSPFv3)**
+* **Task 4: Dynamic Routing Specialist (OSPFv3)**
     * **Mission:** Implement Open Shortest Path First for IPv6.
     * **Steps:** Configure OSPFv3. Measure convergence time during topology changes.
     * **Deliverables:** Create an analytical comparison of OSPFv3 efficiency versus RIPng.
 
 ### II. Traffic Generation & Transport Layer Analysis
 
-* **Task 5: Transport Layer Engineer (TCP & Congestion Control)**
+* **Task 5: Transport Layer Specialist (TCP & Congestion Control)**
     * **Mission:** Analyze reliable data transfer and TCP bottleneck handling.
     * **Steps:** Implement bulk TCP traffic (e.g., large file transfers) using `TcpSessionApp`. Force bottleneck congestion.
     * **Deliverables:** Charts demonstrating TCP throughput, end-to-end delay, and the sawtooth graph of TCP congestion window evolution. 
 
-* **Task 6: Real-Time Applications Engineer (UDP & Wireshark)**
+* **Task 6: Real-Time Applications Specialist (UDP & Wireshark)**
     * **Mission:** Analyze real-time connectionless traffic.
     * **Steps:** Implement UDP simulating real-time streaming. Enable PCAP recording in the `.ini` for specific interfaces. Validate packets in Wireshark.
     * **Deliverables:** Charts analyzing UDP packet loss and jitter. Contrast UDP transmission against TCP backoff.
