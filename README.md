@@ -130,7 +130,7 @@ To avoid Git merge conflicts, ensure a fair workload distribution, and foster co
       * Implement and compare a Best Effort model, Integrated Services (IntServ), and Differentiated Services (DiffServ).
       * Configure traffic classification, queue management, and scheduling policies (FIFO, Priority Queuing, WFQ). (RSVP is optional advanced work).
   * **Deliverables:** Analysis of QoS impact on real-time traffic, evaluation of fairness between flows, and latency improvement comparisons.
-  * **Assignees:** [@princelycodes](https://github.com/princelycodes)
+  * **Assignees:** [@princelycodes](https://github.com/princelycodes), [@lokman-abdelmoname](https://github.com/Skylok-24)
 
 ### Part IV – Advanced Technologies (Choose One)
 
