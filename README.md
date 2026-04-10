@@ -85,13 +85,9 @@ AdvancedNetworksProject/
     
 - **`omnetpp.ini`:** This is where we define the experiment logic (Protocols, Traffic Rates, IPv6 toggles) without changing the underlying physical topology.
 
-Here is the updated version using "Assignees":
-
-***
-
 ## How to Claim Your Sub-Team & Task
 
-To avoid Git merge conflicts, ensure a fair workload distribution, and foster collaboration, we have divided this project into 4 distinct **Sub-Teams**. 
+To avoid Git merge conflicts, ensure a fair workload distribution, and foster collaboration, we have divided this project into 5 **Sub-Teams**. 
 
 **Follow these steps to claim your assignment:**
 
