@@ -85,104 +85,74 @@ AdvancedNetworksProject/
     
 - **`omnetpp.ini`:** This is where we define the experiment logic (Protocols, Traffic Rates, IPv6 toggles) without changing the underlying physical topology.
 
----
+Here is the updated version using "Assignees":
 
-## How to Claim Your Project Task
+***
 
-To avoid Git merge conflicts and ensure a fair workload distribution, we have divided this project into 10 distinct, one-person tasks. 
+## How to Claim Your Sub-Team & Task
+
+To avoid Git merge conflicts, ensure a fair workload distribution, and foster collaboration, we have divided this project into 4 distinct **Sub-Teams**. 
 
 **Follow these steps to claim your assignment:**
 
-1. **Read the Requirements:** Scroll down to the **Task Descriptions** section below. Read carefully—you are responsible for *both* the OMNeT++ configuration and the analytical graphs/reasoning for your specific part.
+1. **Review Your Domain:** Scroll down to the **Team Assignments & Descriptions** section to find the part you are responsible for. Read carefully to understand the scope of your team's assignment. You will need to coordinate with your sub-team to merge your specific configurations and analytical graphs.
+2. **Assign Yourself to an Issue:** Go to the **Issues** tab at the top of this repository. I have already created an issue for each specific domain and task. Find the issue that corresponds to your team's part, look at the right sidebar, and click **"Assign yourself"**.
+3. **Branch & Collaborate:** Once you are assigned, branch off the `main` branch and begin your work. Communicate with your sub-team members to ensure your `.ned` and `.ini` files do not conflict before merging!
 
-2. **Create & Assign an Issue:** Go to the **Issues** tab at the top of this repository and click **"New Issue"**. Title it with the specific task you want (e.g., *"Claiming Task 3: RIPng"*). Before submitting the issue, look at the right sidebar and click **"Assign yourself"**.
+## Team Assignments & Descriptions
 
-*Note: Not familiar with GitHub? Simply scroll down to the task table at the bottom and type your name in the "Claimed By" column to assign yourself a task.*
+### Part I – Network Architecture Design
 
-4. **Lock it in:** Tasks are strictly first-come, first-served. Once your issue is submitted and assigned, branch off the `main` branch and begin your work!
+**Mission:** Design the core baseline topology and establish dynamic routing.
 
-*(Note: Please do not claim a task that already has another team member assigned to it.)*
+  * **Requirements:**
+      * Design a medium-scale routed network topology (minimum 6 routers).
+      * Implement IPv4 or IPv6 addressing (IPv6 preferred for advanced work).
+      * Configure dynamic routing protocols: RIP and OSPF. (BGP is an optional advanced addition).
+  * **Deliverables:** Network topology diagram, formal addressing plan, and routing configuration description.
+  * **Assignees:** [@3boudi](https://github.com/3boudi), [@mamouneabdelli](https://github.com/mamouneabdelli), [@midouuk](https://www.google.com/search?q=https://github.com/midouuk)
 
----
-## Task Assignments & Descriptions
+### Part II – Transport Protocol Analysis
 
-### I. Core Network Architecture & Routing
+**Mission:** Analyze and contrast reliable data transfer against real-time connectionless traffic.
 
-* **Task 1: Lead Network Architect (Topology & IPv6 Addressing)**
-    * **Mission:** Design the baseline physical topology and coordinate the IP addressing scheme.
-    * **Steps:** Extend the `BasicNetwork.ned` template to include a minimum of 6 routers in a core routing topology. Design a complete IPv6 addressing plan. Configure "bottleneck links" (e.g., 1-5 Mbps) to ensure congestion can be forced.
-    * **Deliverables:** Network topology diagram and formal addressing plan.
+  * **Requirements:**
+      * Implement TCP traffic (bulk data/file transfer) and UDP traffic (real-time streaming simulation).
+      * Simulate congestion scenarios and force bottlenecks.
+  * **Deliverables:** Extraction and analysis of OMNeT++ vector data charting Throughput, Packet loss, End-to-end delay, Jitter, and the TCP congestion window evolution.
+  * **Assignees:** [@Yehia-Bou-lahia](https://github.com/Yehia-Bou-lahia), [@abdenourounas](https://github.com/abdenourounas)
 
-* **Task 2: IPv6 Auto-Configuration Specialist (Option A)**
-    * **Mission:** Implement modern IPv6 auto-configuration.
-    * **Steps:** Implement Stateless Address Autoconfiguration (SLAAC) so hosts dynamically obtain addresses from routers. Disable IPv4 globally in the `.ini`.
-    * **Deliverables:** Configuration details and an analytical report section proving auto-configuration successfully populated routing tables without static IP assignment.
+### Part III – Quality of Service (QoS) Implementation
 
-* **Task 3: Dynamic Routing Specialist (RIPng)**
-    * **Mission:** Implement Routing Information Protocol for IPv6.
-    * **Steps:** Configure RIPng across the network routers. Simulate a link failure.
-    * **Deliverables:** Extract data on routing convergence time. Generate charts analyzing protocol overhead and recovery speed.
+**Mission:** Implement traffic prioritization and queue management during active congestion.
 
-* **Task 4: Dynamic Routing Specialist (OSPFv3)**
-    * **Mission:** Implement Open Shortest Path First for IPv6.
-    * **Steps:** Configure OSPFv3. Measure convergence time during topology changes.
-    * **Deliverables:** Create an analytical comparison of OSPFv3 efficiency versus RIPng.
+  * **Requirements:**
+      * Implement and compare a Best Effort model, Integrated Services (IntServ), and Differentiated Services (DiffServ).
+      * Configure traffic classification, queue management, and scheduling policies (FIFO, Priority Queuing, WFQ). (RSVP is optional advanced work).
+  * **Deliverables:** Analysis of QoS impact on real-time traffic, evaluation of fairness between flows, and latency improvement comparisons.
+  * **Assignees:** [@princelycodes](https://github.com/princelycodes)
 
-### II. Traffic Generation & Transport Layer Analysis
+### Part IV – Advanced Technologies (Choose One)
 
-* **Task 5: Transport Layer Specialist (TCP & Congestion Control)**
-    * **Mission:** Analyze reliable data transfer and TCP bottleneck handling.
-    * **Steps:** Implement bulk TCP traffic (e.g., large file transfers) using `TcpSessionApp`. Force bottleneck congestion.
-    * **Deliverables:** Charts demonstrating TCP throughput, end-to-end delay, and the sawtooth graph of TCP congestion window evolution. 
+**Mission:** Expand the simulation with state-of-the-art networking concepts.
 
-* **Task 6: Real-Time Applications Specialist (UDP & Wireshark)**
-    * **Mission:** Analyze real-time connectionless traffic.
-    * **Steps:** Implement UDP simulating real-time streaming. Enable PCAP recording in the `.ini` for specific interfaces. Validate packets in Wireshark.
-    * **Deliverables:** Charts analyzing UDP packet loss and jitter. Contrast UDP transmission against TCP backoff.
+  * **Requirements (Select 1):**
+      * *Option A (IPv6 Advanced Features) - Recommended:* Auto-configuration mechanisms, Mobility support, QoS with IPv6.
+      * *Option B (MPLS):* Simulate label switching behavior inspired by Multiprotocol Label Switching.
+      * *Option C (Mobile Networks):* Simulate mobility scenarios inspired by GSM/UMTS and analyze handover effects on TCP/UDP performance.
+  * **Deliverables:** Implementation and analytical report on the chosen advanced technology.
+  * **Assignees:** -
 
-### III. Quality of Service (QoS)
+### Part V – Data Analytics & Final Deliverables
 
-* **Task 7: QoS Architect (Traffic Classification)**
-    * **Mission:** Implement Differentiated Services (DiffServ).
-    * **Steps:** Establish a Best Effort baseline. Configure the network to classify UDP real-time traffic as high-priority and TCP as standard.
-    * **Deliverables:** Configuration of traffic classes and proof of correct marking.
+**Mission:** Ensure experimental validity, compile global simulation metrics, and integrate the modular work into a cohesive final submission.
 
-* **Task 8: QoS Architect (Queue Management)**
-    * **Mission:** Prioritize traffic during active congestion.
-    * **Steps:** Implement scheduling policies (e.g., Priority Queuing or WFQ) on the bottleneck interfaces.
-    * **Deliverables:** Charts showing queue length evolution. Analyze fairness between flows and latency improvement for real-time traffic.
-
-### IV. Data Operations & Final Delivery
-
-* **Task 9: Data Pipeline & Simulation Controller**
-    * **Mission:** Ensure experimental validity.
-    * **Steps:** Define global simulation parameters (run times, seeds). Manage OMNeT++ vector/scalar extraction. Map out parameter studies (e.g., sweeping bandwidths).
-    * **Deliverables:** Compile global metrics like link utilization. Generate all quantitative comparison charts required for the report.
-
-* **Task 10: Integration & Deliverables Lead**
-    * **Mission:** Combine modular work into a cohesive engineering submission.
-    * **Steps:** Merge Git branches, ensuring `.ned` and `.ini` files compile without errors. Structure the oral presentation.
-    * **Deliverables:** The final 15-25 page Technical Report (incorporating theoretical background and critical analysis) and the slide deck.
-
----
-## Project task selection table
-
-| **Task domain & short description**                                                                                                                                                                                                                                     | **Claimed By (Team Member)** |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| **Task 1: Core Topology & IPv6 Addressing.**<br>Design the `BasicNetwork.ned` file with 6+ routers. Configure the delay and bandwidth of the bottleneck links to force congestion, and draft the formal IPv6 addressing plan for the network.                           |      HALITIM AMIN               |     
-| **Task 2: IPv6 Auto-Configuration (Option A).**<br>Implement SLAAC (Stateless Address Autoconfiguration). Write the `.ini` configuration to disable IPv4, enable IPv6, and ensure all host interfaces dynamically generate and obtain their addresses from the routers. |      HALITIM AMIN                |     
-| **Task 3: Dynamic Routing (RIPng).**<br>Configure RIPng (the IPv6 version of RIP) across the network routers. Extract data on routing convergence time by simulating a link failure, and prepare the analytical comparison of protocol overhead.                        |              abdelmoumen abdelli                |
-| **Task 4: Dynamic Routing (OSPFv3).**<br>Configure OSPFv3 for the IPv6 network. Measure its convergence time during topology changes and write the analytical section comparing its efficiency against the RIPng implementation.                                        |                Midou              |
-| **Task 5: TCP Transport & Congestion.**<br>Configure `TcpSessionApp` to simulate heavy bulk data transfers. Force bottleneck congestion and extract OMNeT++ vector data to graph throughput, delay, and the TCP congestion window evolution.                            |        Yehia                      |
-| **Task 6: UDP Real-Time & Wireshark.**<br>Configure `UdpBasicApp` streaming to simulate real-time traffic. Analyze UDP packet loss and jitter. Enable PCAP recording and use Wireshark to validate packet-level behavior and headers.<br>                               |           ounas                |
-| **Task 7: QoS - Traffic Classification.**<br>Build the baseline Best Effort model, then implement Differentiated Services (DiffServ). Configure the network to classify the UDP real-time traffic as high-priority and the TCP traffic as standard.<br>                 |          Princely                 |
-| **Task 8: QoS - Queue Management.**<br>Implement scheduling policies (e.g., Priority Queuing or WFQ) on the bottleneck router interfaces. Extract charts showing queue length evolution and analyze the fairness between flows and latency improvements.                |                              |
-| **Task 9: Data Analytics & Simulation Control.**<br>Manage the `.ini` parameter configurations (run times, seeds). Extract all OMNeT++ `.vec` and `.sca` data and plot the final quantitative comparison charts required for the report.                                |                              |
-| **Task 10: Integration & Report Lead.**<br>Merge all team configurations, ensuring the simulation compiles without errors. Compile the 15-25 page technical report, integrate the theoretical background, and structure the 15-20 minute oral presentation.             |                              |
-
-
-
----
+  * **Requirements:**
+      * Define and manage global simulation parameters, justifying traffic models and running multiple simulation scenarios.
+      * Extract, compile, and analyze overall performance metrics from the OMNeT++ simulations: Throughput (bps), Packet loss ratio, End-to-end delay, Jitter, Routing convergence time, Link utilization, and Queue length evolution.
+      * Apply analytical reasoning and networking theory to compare results quantitatively (no purely descriptive reporting).
+  * **Deliverables:** The complete OMNeT++ Project Files (merged NED files, INI configurations, and any custom modules) and the final 15–25 page Technical Report (incorporating the theoretical background, network design, methodology, results, and critical analysis).
+  * **Assignees:** -
 
 ## References & Documentation
 
