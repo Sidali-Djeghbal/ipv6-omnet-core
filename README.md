@@ -46,7 +46,7 @@ description = "Simulation running OSPFv3"
 
 _When you run the simulation, you select which `Config` to execute. The `Config` inherits everything from `General`._
 
-**3. Parameter Studies (Task 9 take note):**
+**3. Parameter Studies:**
 
 You can run multiple simulations with varying variables dynamically using `${}` iterators.
 
