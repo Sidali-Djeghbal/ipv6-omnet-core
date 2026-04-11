@@ -24,7 +24,7 @@ AdvancedNetworksProject/
 ├── omnetpp.ini                 ← All simulation configs (RIPng, OSPFv3, sweep)
 ├── results/                    ← Auto-created; holds .sca and .vec output files
 ├── network_topology.html       ← Visual topology diagram (open in browser)
-└── README_PartI.md             ← This file
+└── README-P1.md             ← This file
 ```
 
 ---
