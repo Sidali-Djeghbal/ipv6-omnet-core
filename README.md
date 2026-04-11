@@ -1,4 +1,5 @@
 # Part I — Network Architecture Design
+![OMNeT++](https://img.shields.io/badge/OMNeT++-Simulation-4B5563?style=flat-square&logo=cplusplus&logoColor=white) ![INET Framework](https://img.shields.io/badge/INET-Framework-F59E0B?style=flat-square&logo=databricks&logoColor=white) ![C++](https://img.shields.io/badge/C++-Backend-2563EB?style=flat-square&logo=cplusplus&logoColor=white) ![Status](https://img.shields.io/badge/Status-Active_Development-10B981?style=flat-square&logo=github&logoColor=white)
 
 **Advanced Networks Course Project · OMNeT++ 6.3 / INET 4.5**
 **Team:** @3boudi · @mamouneabdelli · @midouuk
