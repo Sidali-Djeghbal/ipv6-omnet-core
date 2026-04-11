@@ -97,7 +97,7 @@ To avoid Git merge conflicts, ensure a fair workload distribution, and foster co
 
 ## Team Assignments & Descriptions
 
-### Part I – Network Architecture Design
+### [Part I – Network Architecture Design](https://github.com/Sidali-Djeghbal/ipv6-omnet-core/blob/network-design/README-P1.md)
 
 **Mission:** Design the core baseline topology and establish dynamic routing.
 
