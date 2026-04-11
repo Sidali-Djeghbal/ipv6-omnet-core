@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    ospfv3_config.xml  —  OSPFv3 configuration for BasicNetwork (IPv6)
+    OSPFv3 in INET requires one <Router> entry per router.
+    All routers are placed in Area 0 (backbone).
+
+    Interface order matches NED connections block:
+      r1:  eth0=client1  eth1=r2         eth2=r4
+      r2:  eth0=r1       eth1=r3         eth2=r5 (bottleneck, metric=100)
+      r3:  eth0=r2       eth1=server1    eth2=r6
+      r4:  eth0=client2  eth1=r5         eth2=r1
+      r5:  eth0=r4       eth1=r6         eth2=r2 (bottleneck, metric=100)
+      r6:  eth0=r5       eth1=server2    eth2=r3
+
+    The bottleneck link (R2-R5) has metric=100 so OSPFv3 will
+    prefer alternate paths when available — demonstrating
+    OSPFv3's cost-aware routing vs RIPng's hop-count routing.
+-->
+<OSPFv3Configuration>
+
+    <!-- ═══ R1 ═══════════════════════════════════════════ -->
+    <Router id="r1" ipv6="true">
+        <Area id="0.0.0.0">
+            <Interface name="eth0" type="PointToPoint"/>  <!-- → Client1    -->
+            <Interface name="eth1" type="PointToPoint"/>  <!-- → R2         -->
+            <Interface name="eth2" type="PointToPoint"/>  <!-- → R4         -->
+        </Area>
+    </Router>
+
+    <!-- ═══ R2 ═══════════════════════════════════════════ -->
+    <Router id="r2" ipv6="true">
+        <Area id="0.0.0.0">
+            <Interface name="eth0" type="PointToPoint"/>                     <!-- → R1         -->
+            <Interface name="eth1" type="PointToPoint"/>                     <!-- → R3         -->
+            <Interface name="eth2" type="PointToPoint" metric="100"/>        <!-- → R5 BOTTLENECK -->
+        </Area>
+    </Router>
+
+    <!-- ═══ R3 ═══════════════════════════════════════════ -->
+    <Router id="r3" ipv6="true">
+        <Area id="0.0.0.0">
+            <Interface name="eth0" type="PointToPoint"/>  <!-- → R2         -->
+            <Interface name="eth1" type="PointToPoint"/>  <!-- → Server1    -->
+            <Interface name="eth2" type="PointToPoint"/>  <!-- → R6         -->
+        </Area>
+    </Router>
+
+    <!-- ═══ R4 ═══════════════════════════════════════════ -->
+    <Router id="r4" ipv6="true">
+        <Area id="0.0.0.0">
+            <Interface name="eth0" type="PointToPoint"/>  <!-- → Client2    -->
+            <Interface name="eth1" type="PointToPoint"/>  <!-- → R5         -->
+            <Interface name="eth2" type="PointToPoint"/>  <!-- → R1         -->
+        </Area>
+    </Router>
+
+    <!-- ═══ R5 ═══════════════════════════════════════════ -->
+    <Router id="r5" ipv6="true">
+        <Area id="0.0.0.0">
+            <Interface name="eth0" type="PointToPoint"/>                     <!-- → R4         -->
+            <Interface name="eth1" type="PointToPoint"/>                     <!-- → R6         -->
+            <Interface name="eth2" type="PointToPoint" metric="100"/>        <!-- → R2 BOTTLENECK -->
+        </Area>
+    </Router>
+
+    <!-- ═══ R6 ═══════════════════════════════════════════ -->
+    <Router id="r6" ipv6="true">
+        <Area id="0.0.0.0">
+            <Interface name="eth0" type="PointToPoint"/>  <!-- → R5         -->
+            <Interface name="eth1" type="PointToPoint"/>  <!-- → Server2    -->
+            <Interface name="eth2" type="PointToPoint"/>  <!-- → R3         -->
+        </Area>
+    </Router>
+
+</OSPFv3Configuration>
