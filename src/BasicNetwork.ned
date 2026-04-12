@@ -1,50 +1,141 @@
+// ============================================================
+// BasicNetwork.ned — Part I: Network Architecture Design
+// Advanced Networks Course Project — OMNeT++ / INET Framework
+// Team: @3boudi, @mamouneabdelli, @midouuk
+//
+// Topology:
+//   6 core routers (R1–R6) forming a mesh with a deliberate
+//   bottleneck link between R2 and R5.
+//   2 client hosts + 2 server hosts in stub LANs.
+//   IPv6 addressing via Ipv6NetworkConfigurator.
+//   Supports RIPng and OSPFv3 via omnetpp.ini [Config] sections.
+// ============================================================
+
 package src;
 
-import inet.networklayer.configurator.ipv4.Ipv4NetworkConfigurator;
+import inet.networklayer.configurator.ipv6.Ipv6FlatNetworkConfigurator;
 import inet.node.inet.StandardHost;
 import inet.node.inet.Router;
-import inet.node.ethernet.EthernetLink;
+import inet.common.misc.ThruputMeteringChannel;
+
+// ----------------------------------------------------------
+// Define named channel types to avoid repeating parameters
+// ----------------------------------------------------------
+
+channel LanLink extends ned.DatarateChannel
+{
+    delay    = 2ms;
+    datarate = 100Mbps;
+}
+
+channel CoreLink extends ned.DatarateChannel
+{
+    delay    = 10ms;
+    datarate = 100Mbps;
+}
+
+channel BottleneckLink extends ned.DatarateChannel
+{
+    // This is the key congestion link — deliberately constrained.
+    // Part II / III teams will vary this bandwidth for experiments.
+    delay    = 20ms;
+    datarate = 10Mbps;   // 10Mbps vs 100Mbps core = real bottleneck
+}
+
+// ----------------------------------------------------------
+// Network Definition
+// ----------------------------------------------------------
 
 network BasicNetwork
 {
     parameters:
-        @display("bgb=900,600");
+        @display("bgb=1100,700;bgi=background/terrain");
+
     submodules:
-        configurator: Ipv4NetworkConfigurator {
+
+        // ── IPv6 Auto-Configurator ──────────────────────────
+        // Assigns global unicast addresses (2001:db8::/32 range)
+        // and installs static routes on all nodes automatically.
+        configurator: Ipv6FlatNetworkConfigurator {
             parameters:
-                @display("p=100,50");
+                @display("p=80,60;is=s");
         }
-        // Routers
-        r1: Router { @display("p=300,200"); }
-        r2: Router { @display("p=500,200"); }
-        r3: Router { @display("p=700,200"); }
-        r4: Router { @display("p=300,400"); }
-        r5: Router { @display("p=500,400"); }
-        r6: Router { @display("p=700,400"); }
 
-        // Clients
-        client1: StandardHost { @display("p=100,200"); }
-        client2: StandardHost { @display("p=100,400"); }
+        // ── Core Routers ────────────────────────────────────
+        // All routers run a routing daemon selected in omnetpp.ini
+        // via the **.routingProtocol parameter.
 
-        // Servers
-        server1: StandardHost { @display("p=850,200"); }
-        server2: StandardHost { @display("p=850,400"); }
+        r1: Router {
+            parameters:
+                @display("p=300,220;i=abstract/router");
+        }
+        r2: Router {
+            parameters:
+                @display("p=520,220;i=abstract/router");
+        }
+        r3: Router {
+            parameters:
+                @display("p=740,220;i=abstract/router");
+        }
+        r4: Router {
+            parameters:
+                @display("p=300,460;i=abstract/router");
+        }
+        r5: Router {
+            parameters:
+                @display("p=520,460;i=abstract/router");
+        }
+        r6: Router {
+            parameters:
+                @display("p=740,460;i=abstract/router");
+        }
+
+        // ── Client Hosts ─────────────────────────────────────
+        client1: StandardHost {
+            parameters:
+                @display("p=100,220;i=device/pc");
+        }
+        client2: StandardHost {
+            parameters:
+                @display("p=100,460;i=device/pc");
+        }
+
+        // ── Server Hosts ─────────────────────────────────────
+        server1: StandardHost {
+            parameters:
+                @display("p=960,220;i=device/server");
+        }
+        server2: StandardHost {
+            parameters:
+                @display("p=960,460;i=device/server");
+        }
 
     connections allowunconnected:
-        // Left LAN
-        client1.ethg++ <--> EthernetLink { delay = 2ms; datarate = 100Mbps; } <--> r1.ethg++;
-        client2.ethg++ <--> EthernetLink { delay = 2ms; datarate = 100Mbps; } <--> r4.ethg++;
 
-        // Core topology
-        r1.ethg++ <--> EthernetLink { delay = 10ms; datarate = 10Mbps; } <--> r2.ethg++;
-        r2.ethg++ <--> EthernetLink { delay = 10ms; datarate = 10Mbps; } <--> r3.ethg++;
-        r4.ethg++ <--> EthernetLink { delay = 10ms; datarate = 10Mbps; } <--> r5.ethg++;
-        r5.ethg++ <--> EthernetLink { delay = 10ms; datarate = 10Mbps; } <--> r6.ethg++;
+        // ── Left LAN Segments ────────────────────────────────
+        client1.ethg++ <--> LanLink <--> r1.ethg++;
+        client2.ethg++ <--> LanLink <--> r4.ethg++;
 
-        // Bottleneck link (for congestion experiments) - Fixed to 10Mbps
-        r2.ethg++ <--> EthernetLink { delay = 20ms; datarate = 10Mbps; } <--> r5.ethg++;
+        // ── Core Mesh Connections ────────────────────────────
+        // Top row
+        r1.ethg++ <--> CoreLink <--> r2.ethg++;
+        r2.ethg++ <--> CoreLink <--> r3.ethg++;
 
-        // Right LAN
-        r3.ethg++ <--> EthernetLink { delay = 2ms; datarate = 100Mbps; } <--> server1.ethg++;
-        r6.ethg++ <--> EthernetLink { delay = 2ms; datarate = 100Mbps; } <--> server2.ethg++;
+        // Bottom row
+        r4.ethg++ <--> CoreLink <--> r5.ethg++;
+        r5.ethg++ <--> CoreLink <--> r6.ethg++;
+
+        // Vertical cross-links (provides redundancy and alternate paths)
+        r1.ethg++ <--> CoreLink <--> r4.ethg++;
+        r3.ethg++ <--> CoreLink <--> r6.ethg++;
+
+        // ── Bottleneck Link (KEY for congestion experiments) ──
+        // R2 <-> R5 is deliberately constrained: 5 Mbps, 20 ms RTT.
+        // Both TCP and UDP traffic must cross this link, creating
+        // the congestion scenario required in Part II.
+        r2.ethg++ <--> BottleneckLink <--> r5.ethg++;
+
+        // ── Right LAN Segments ───────────────────────────────
+        r3.ethg++ <--> LanLink <--> server1.ethg++;
+        r6.ethg++ <--> LanLink <--> server2.ethg++;
 }
