@@ -1,0 +1,48 @@
+=============================================================
+  TEAM 01 — TESTING RESULTS
+  Part I: Network Architecture Design
+  Project: Advanced Networks Course Project (OMNeT++ / INET)
+  Team: @3boudi · @mamouneabdelli · @midouuk
+  Date: April 11, 2026
+=============================================================
+
+-------------------------------------------------------------
+TEST 1 — RIPng Configuration
+-------------------------------------------------------------
+Command : opp_run -u Cmdenv -c RIPng omnetpp.ini
+Status  : PASS
+Details :
+  - Simulation completed full 100s without errors
+  - RIPng enabled on all routers (r1..r6) via **.r[*] pattern
+  - Routing tables populated dynamically
+  - Result files generated:
+      results/RIPng-0.sca  (non-empty)
+      results/RIPng-0.vec  (non-empty)
+
+-------------------------------------------------------------
+TEST 2 — OSPFv3 Configuration
+-------------------------------------------------------------
+Command : opp_run -u Cmdenv -c OSPFv3 omnetpp.ini
+Status  : PASS
+Details :
+  - Simulation completed full 100s without errors
+  - OSPFv3 enabled on all routers via **.r[*] pattern
+  - Inline config used (no external XML file required)
+  - Result files generated:
+      results/OSPFv3-0.sca  (non-empty)
+      results/OSPFv3-0.vec  (non-empty)
+
+-------------------------------------------------------------
+FIXES APPLIED BEFORE TESTING
+-------------------------------------------------------------
+  [1] **.router* → **.r[*] in RIPng section
+  [2] **.router* → **.r[*] in OSPFv3 section
+  [3] TCP/UDP apps moved to [Config Part_II_Base]
+  [4] Removed non-existent RIPng vector signals
+  [5] Removed non-existent OSPFv3 vector signals
+  [6] Removed missing ospfv3_config.xml reference (inline only)
+  [7] Deleted Bottleneck_Study config (belongs to Part III)
+
+-------------------------------------------------------------
+OVERALL STATUS: READY FOR SUBMISSION
+-------------------------------------------------------------
