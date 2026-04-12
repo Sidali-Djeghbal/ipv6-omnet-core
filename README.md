@@ -97,7 +97,7 @@ To avoid Git merge conflicts, ensure a fair workload distribution, and foster co
 
 ## Team Assignments & Descriptions
 
-### Part I – Network Architecture Design
+### [Part I – Network Architecture Design](README-PART-I.md)
 
 **Mission:** Design the core baseline topology and establish dynamic routing.
 
