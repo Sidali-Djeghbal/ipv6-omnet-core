@@ -1,285 +1,185 @@
-# Part I — Network Architecture Design
-![OMNeT++](https://img.shields.io/badge/OMNeT++-Simulation-4B5563?style=flat-square&logo=cplusplus&logoColor=white) ![INET Framework](https://img.shields.io/badge/INET-Framework-F59E0B?style=flat-square&logo=databricks&logoColor=white) ![C++](https://img.shields.io/badge/C++-Backend-2563EB?style=flat-square&logo=cplusplus&logoColor=white) ![Status](https://img.shields.io/badge/Status-Active_Development-10B981?style=flat-square&logo=github&logoColor=white)
-
-**Advanced Networks Course Project · OMNeT++ 6.3 / INET 4.5**
-**Team:** @3boudi · @mamouneabdelli · @midouuk
-**Status:** ✅ Final version — cleaned & ready for submission
+# Task 6 — UDP Real-Time Traffic Analysis
+**Advanced Networks Course Project — OMNeT++ / INET Framework**
+**Team 2:** @abdenourounas | @Yehia-Bou-lahia
+**Protocol:** UDP (RFC 768) | **Routing:** RIPng over IPv6
 
 ---
 
-## Network Topology
+## 1. Introduction
 
-![Network Topology](network_topology_diagram.png)
+This section analyzes UDP behavior as a real-time streaming protocol under network congestion. Unlike TCP, UDP provides no reliability guarantees — it transmits continuously without retransmission, flow control, or congestion response. This makes it suitable for time-sensitive applications (VoIP, video streaming, online gaming) where low latency is preferred over guaranteed delivery.
+
+The simulation uses the verified 6-router IPv6 topology from Part I, with a deliberate bottleneck link between R2 and R5 (10 Mbps vs. 100 Mbps everywhere else). Three UDP scenarios were tested to evaluate performance degradation under increasing load.
+
+---
+
+## 2. Theoretical Background
+
+### 2.1 UDP Protocol (RFC 768)
+
+UDP is a connectionless, unreliable transport protocol. Its header is only **8 bytes**:
+
+| Field | Size | Description |
+|---|---|---|
+| Source Port | 16 bits | Sender's port |
+| Destination Port | 16 bits | Receiver's port |
+| Length | 16 bits | Header + data |
+| Checksum | 16 bits | Integrity check |
+
+The simplicity of UDP (no handshake, no ACK, no congestion window) results in minimal overhead, making it ideal for real-time applications where retransmitting stale data is worse than losing it.
+
+### 2.2 Key Metrics
+
+**Packet Loss %**
+$$\text{Loss \%} = \frac{\text{Packets Sent} - \text{Packets Received}}{\text{Packets Sent}} \times 100$$
+
+**Jitter (RFC 3550)**
+$$J = J + \frac{|D(i-1,\, i)| - J}{16}$$
+where $D(i,j)$ is the difference in inter-arrival time between consecutive packets. Jitter represents the variance in end-to-end delay — critical for audio/video quality.
+
+### 2.3 Why UDP for Real-Time Streaming?
+
+| Property | UDP | TCP |
+|---|---|---|
+| Retransmission | ❌ None | ✅ Automatic |
+| Delay | ✅ Low and stable | ❌ Variable (ACK + cwnd) |
+| Congestion response | ❌ None | ✅ Reduces sending rate |
+| Packet loss tolerance | ✅ Acceptable (frame skip) | ❌ Must deliver all bytes |
+| Use case | Video, audio, games | Files, email, web |
+
+---
+
+## 3. Network Setup
+
+### 3.1 Topology
 
 ```
-[Client1]──100Mbps──[R1]──100Mbps──[R2]──100Mbps──[R3]──100Mbps──[Server1]
+[Client1]──100Mbps──[r1]──100Mbps──[r2]──100Mbps──[r3]──100Mbps──[Server1]
                      |                |                |
-                  100Mbps        10Mbps ⚠️          100Mbps
-                   (BN)         BOTTLENECK           (BN)
+                  100Mbps        10Mbps ⚠️           100Mbps
+                  (core)      BOTTLENECK            (core)
                      |                |                |
-[Client2]──100Mbps──[R4]──100Mbps──[R5]──100Mbps──[R6]──100Mbps──[Server2]
+[Client2]──100Mbps──[r4]──100Mbps──[r5]──100Mbps──[r6]──100Mbps──[Server2]
 ```
 
-> ⚠️ Bottleneck link **R2↔R5: 10 Mbps / 20 ms** — intentionally constrained for congestion experiments.
+- **Bottleneck:** R2 ↔ R5 — 10 Mbps, 20 ms delay
+- **All other links:** 100 Mbps, 2–10 ms delay
+- **Routing:** RIPng (IPv6 distance-vector)
+- **UDP flow:** client2 → server2 (port 2000)
 
----
+### 3.2 Simulation Configurations
 
-## What This Part Does
-
-This part builds the **core IPv6 network infrastructure** used by all other teams.
-
-It includes:
-
-* 6-router mesh topology with redundancy
-* IPv6 addressing (`2001:db8::/32`)
-* Dynamic routing: RIPng and OSPFv3
-* Clean base config for Part II
-
-No application logic here — only **topology + routing**.
-
----
-
-##  What Part I Contains
- 
-### `BasicNetwork.ned` — Topology
- 
-Defines the full network structure:
- 
-| Element | Count | Detail |
-|---------|-------|--------|
-| Core Routers | 6 | R1, R2, R3, R4, R5, R6 |
-| Client Hosts | 2 | Client1 (TCP), Client2 (UDP) |
-| Server Hosts | 2 | Server1 (port 1000), Server2 (port 2000) |
-| LAN Links | 4 | 100 Mbps / 2 ms |
-| Core Links | 6 | 100 Mbps / 10 ms |
-| Bottleneck Link | 1 | R2↔R5 — 10 Mbps / 20 ms |
- 
-**Design decisions:**
- 
-| Decision | Choice | Reason |
-|----------|--------|--------|
-| IP version | IPv6 only | Required for RIPng and OSPFv3 |
-| Topology | 6-router mesh | Satisfies requirements + redundancy for OSPF cost comparison |
-| Bottleneck | R2–R5 @ 10 Mbps | Forces congestion when both flows compete — needed by Part II |
-| LAN links | 100 Mbps | LAN is never the bottleneck |
-| Core links | 100 Mbps | 10× faster than bottleneck |
- 
----
- 
-### `omnetpp.ini` — Simulation Configs
- 
-Contains **4 configs** — each inheriting from `[General]`:
- 
-#### `[General]` — Infrastructure only (Part I owns this — do not modify)
-- Sets `src.BasicNetwork` as the network
-- 100s simulation time
-- IPv6 enabled (`**.hasIpv6 = true`, `**.hasIpv4 = false`)
-- `Ipv6FlatNetworkConfigurator` assigns `2001:db8::/32` addresses automatically
-- TCP stack baseline: `TcpReno`
-- Output files: `results/${configname}-${runnumber}.sca/.vec`
- 
-#### `[Config RIPng]` — Distance-Vector routing (RFC 2080)
 ```ini
-**.r[*].hasRip          = true
-**.r[*].rip.mode        = "RIPng"
-**.r[*].rip.updateInterval   = 30s
-**.r[*].rip.routeExpiryTime  = 180s
-**.r[*].rip.routePurgeTime   = 120s
-```
-- Disables static routes — lets RIPng build the table dynamically
-- Converges in ~90–150s (hop-count metric)
- 
-#### `[Config OSPFv3]` — Link-State routing (RFC 5340)
-```ini
-**.r[*].hasOspf                 = true
-**.r[*].ospf.ospfConfig         = xmldoc("ospfv3_config.xml")
-**.r[*].ospf.helloInterval      = 10s
-**.r[*].ospf.deadInterval       = 40s
-**.r[*].ospf.retransmitInterval = 5s
-```
-- All 6 routers in Area 0 (backbone)
-- Bottleneck link gets `metric=100` → OSPFv3 avoids it when possible
-- Converges in <30s (bandwidth-aware metric)
- 
-#### `[Config Part_II_Base]` — Scaffold for Part II team
-- Extends `RIPng`
-- Adds TCP (`TcpSessionApp`) and UDP (`UdpBasicApp`) traffic
-- Part II team creates new configs that `extend = Part_II_Base`
- 
----
- 
-### `ospfv3_config.xml` — OSPFv3 Area Configuration
- 
-Defines each router's interfaces in Area 0. Key detail: the bottleneck interfaces (R2 `eth2` and R5 `eth2`) are assigned `metric="100"` to make OSPFv3 prefer alternate paths:
- 
-```xml
-<Router id="r2" ipv6="true">
-  <Area id="0.0.0.0">
-    <Interface name="eth0" type="PointToPoint"/>           <!-- → R1 -->
-    <Interface name="eth1" type="PointToPoint"/>           <!-- → R3 -->
-    <Interface name="eth2" type="PointToPoint" metric="100"/> <!-- → R5 BOTTLENECK -->
-  </Area>
-</Router>
-```
- 
----
- 
-##  IPv6 Addressing Plan
- 
-All 11 subnets assigned automatically by `Ipv6FlatNetworkConfigurator` in the `2001:db8::/32` block.  
-See full table: [`IPv6_Addressing_Plan.csv`](IPv6_Addressing_Plan.csv)
- 
-| Subnet | Prefix | Connected Nodes |
-|--------|--------|-----------------|
-| Client1 LAN | `2001:db8:0:10::/64` | Client1 ↔ R1 eth0 |
-| Client2 LAN | `2001:db8:0:20::/64` | Client2 ↔ R4 eth0 |
-| Server1 LAN | `2001:db8:0:30::/64` | Server1 ↔ R3 eth1 |
-| Server2 LAN | `2001:db8:0:40::/64` | Server2 ↔ R6 eth1 |
-| R1–R2 Core | `2001:db8:0:12::/64` | R1 eth1 ↔ R2 eth0 |
-| R2–R3 Core | `2001:db8:0:23::/64` | R2 eth1 ↔ R3 eth0 |
-| R4–R5 Core | `2001:db8:0:45::/64` | R4 eth1 ↔ R5 eth0 |
-| R5–R6 Core | `2001:db8:0:56::/64` | R5 eth1 ↔ R6 eth0 |
-| R1–R4 Cross | `2001:db8:0:14::/64` | R1 eth2 ↔ R4 eth2 |
-| R3–R6 Cross | `2001:db8:0:36::/64` | R3 eth2 ↔ R6 eth2 |
-| R2–R5 Bottleneck ⚠️ | `2001:db8:0:25::/64` | R2 eth2 ↔ R5 eth2 |
- 
----
- 
-##  Test Results
- 
-See full report: [`TESTING_RESULTS.txt`](TESTING_RESULTS.txt)
- 
-| Config | Result | Duration | Output Files |
-|--------|--------|----------|--------------|
-| `RIPng` | ✅ PASS | 100s | `RIPng-0.sca` + `RIPng-0.vec` |
-| `OSPFv3` | ✅ PASS | 100s | `OSPFv3-0.sca` + `OSPFv3-0.vec` |
- 
-**How to run:**
-```bash
-# RIPng
-opp_run -u Cmdenv -c RIPng omnetpp.ini
- 
-# OSPFv3
-opp_run -u Cmdenv -c OSPFv3 omnetpp.ini
-```
- 
-**RIPng vs OSPFv3 comparison:**
- 
-| Metric | RIPng | OSPFv3 |
-|--------|-------|--------|
-| Convergence speed | ~90–150s | <30s |
-| Routing metric | Hop count | Link cost (bandwidth) |
-| Path selection | Suboptimal | Optimal (avoids bottleneck) |
-| Scalability | Max 15 hops | Unlimited |
-| Overhead | Low | Higher (LSA flooding) |
- 
----
-
-## Project Structure
-
-```
-ipv6-omnet-core/
-├── src/
-│   └── BasicNetwork.ned
-├── omnetpp.ini
-├── ospfv3_config.xml
-├── IPv6_Addressing_Plan.csv
-├── network_topology_diagram.png
-├── TESTING_RESULTS.txt
-├── results/
+[Config UDP_Streaming]        # 5ms interval  ≈ 1.6 Mbps
+[Config UDP_Heavy_Load]       # 1ms interval  ≈ 8 Mbps
+[Config TCP_UDP_Competing]    # 10ms interval + TCP 100MB
 ```
 
 ---
 
-## Routing Configurations
+## 4. Experimental Results
 
-### RIPng
+### 4.1 Packet Loss
 
-* Distance vector (RFC 2080)
-* Slow convergence (~90–150s)
-* Uses hop count
+| Scenario | Packets Sent | Packets Received | **Loss %** |
+|---|---|---|---|
+| UDP_Streaming | 20,000 | 19,527 | **2.365%** |
+| UDP_Heavy_Load | 100,000 | 96,072 | **3.928%** |
+| TCP_UDP_Competing | 9,501 | 9,498 | **0.032%** |
 
-```
-**.r[*].hasRip = true
-**.r[*].rip.mode = "RIPng"
-```
+### 4.2 End-to-End Delay & Jitter
 
----
+| Scenario | Mean Delay | Jitter (StdDev) |
+|---|---|---|
+| UDP_Streaming | 24.354 ms | 0.590 ms |
+| UDP_Heavy_Load | 24.355 ms | 0.579 ms |
+| TCP_UDP_Competing | 24.356 ms | 0.642 ms |
 
-### OSPFv3
+### 4.3 Throughput
 
-* Link-state (RFC 5340)
-* Fast convergence (<30s)
-* Uses bandwidth-based cost
-* Avoids bottleneck via high metric
-
-```
-**.r[*].hasOspf = true
-**.r[*].ospf.ospfConfig = xmldoc("ospfv3_config.xml")
-```
-
----
-
-## IPv6 Addressing
-
-All subnets are auto-assigned using `Ipv6FlatNetworkConfigurator`.
-
-Example:
-
-| Subnet      | Prefix             |
-| ----------- | ------------------ |
-| Client1 LAN | 2001:db8:0:10::/64 |
-| Client2 LAN | 2001:db8:0:20::/64 |
-| Server1 LAN | 2001:db8:0:30::/64 |
-| Server2 LAN | 2001:db8:0:40::/64 |
-| Bottleneck  | 2001:db8:0:25::/64 |
+| Scenario | Configured Rate | Effective Throughput |
+|---|---|---|
+| UDP_Streaming | ~1.6 Mbps | ~1.67 Mbps |
+| UDP_Heavy_Load | ~8 Mbps | ~7.7 Mbps |
+| TCP_UDP_Competing | ~800 kbps | ~760 kbps |
 
 ---
 
-## How to Run
+## 5. Analysis
 
-### RIPng
+### 5.1 End-to-End Delay Graph
 
-```
-opp_run -u Cmdenv -c RIPng omnetpp.ini
-```
+The three delay graphs show the same pattern:
 
-### OSPFv3
+- **Initial phase (t = 0–5s):** High delay peaks (29–69 ms) caused by RIPng convergence — the routing tables are still being built, causing packets to take suboptimal paths with higher queuing delays.
+- **Steady state (t > 5s):** Delay stabilizes at **~24.35 ms**, which corresponds to the theoretical propagation delay of the path: 2ms + 10ms + 20ms + 10ms + 2ms = **44ms** (note: OMNeT++ measures one-way, so half-RTT ≈ 22ms + processing ≈ 24ms ✅).
+- **No delay growth over time:** Confirms the bottleneck does not cause buffer accumulation under these traffic loads.
 
-```
-opp_run -u Cmdenv -c OSPFv3 omnetpp.ini
-```
+### 5.2 Packet Loss Analysis
 
----
+Packet loss increases with traffic intensity, as expected:
 
-## Key Results
+- **UDP_Streaming (2.365%):** Light load, well within acceptable bounds for video streaming (< 5% is generally acceptable).
+- **UDP_Heavy_Load (3.928%):** Higher load pushes the bottleneck harder, increasing queue overflow events. Still below critical thresholds.
+- **TCP_UDP_Competing (0.032%):** Very low loss because UDP sends at only 800 kbps — far below the 10 Mbps bottleneck, leaving ample bandwidth. TCP and UDP coexist without significant contention at this rate.
 
-| Metric               | RIPng | OSPFv3  |
-| -------------------- | ----- | ------- |
-| Convergence          | Slow  | Fast    |
-| Path quality         | Weak  | Optimal |
-| Bottleneck avoidance | ❌     | ✅       |
+### 5.3 Jitter Analysis
 
----
+All three scenarios exhibit very low jitter (< 1 ms), indicating:
 
-## Notes for Next Parts
+- The network introduces consistent, predictable delay.
+- No burst congestion events that would cause irregular inter-arrival times.
+- The RIPng routing is stable after initial convergence.
 
-* **Part II:** extend configs, don’t modify base
-* **Part III:** congestion happens at R2–R5
-* **Part IV:** IPv6 already enabled
-* **Part V:** use `results/` for analysis
+The slightly higher jitter in TCP_UDP_Competing (0.642 ms vs ~0.58 ms) is explained by TCP's dynamic behavior — as TCP's congestion window fluctuates, it briefly competes with UDP at the bottleneck, introducing small variations in UDP packet inter-arrival times.
 
----
+### 5.4 UDP vs TCP Fairness (TCP_UDP_Competing)
 
-## Dependencies
+When TCP (100 MB transfer) and UDP (800 kbps stream) compete:
 
-* OMNeT++ 6.3
-* INET 4.5
+- UDP maintains **0.032% loss** — nearly perfect delivery.
+- This is because UDP at 800 kbps is far below the 10 Mbps bottleneck.
+- TCP absorbs the remaining bandwidth, adapting via congestion control.
+- This demonstrates that UDP at moderate rates does not harm co-existing TCP flows.
 
 ---
 
-## References
+## 6. Graphs
 
-* RFC 2080 — RIPng
-* RFC 5340 — OSPFv3
-* OMNeT++ / INET docs
+### Figure 1 — UDP_Streaming: End-to-End Delay
+> Initial convergence peaks (29–69 ms) followed by stable 24.35 ms steady state.
+> 19,527 packets received out of 20,000 sent (2.365% loss).
+
+### Figure 2 — UDP_Heavy_Load: End-to-End Delay
+> Same delay pattern with denser packet stream. 96,072 / 100,000 packets received (3.928% loss).
+> Initial burst shows RIPng convergence effect more clearly due to higher packet rate.
+
+### Figure 3 — TCP_UDP_Competing: End-to-End Delay
+> UDP operates at 800 kbps alongside TCP 100MB transfer.
+> Near-zero loss (0.032%) with stable delay at 24.356 ms.
+> Slightly higher jitter (0.642 ms) due to TCP congestion window dynamics.
+
+---
+
+## 7. Conclusion
+
+The simulation results confirm the expected behavior of UDP under network congestion:
+
+1. **UDP is insensitive to congestion** — it continues sending at the configured rate regardless of network state, leading to packet loss when the bottleneck is saturated.
+
+2. **Delay is stable after routing convergence** — the ~24.35 ms steady-state delay is consistent across all scenarios, showing no buffer bloat.
+
+3. **Loss scales with load** — from 2.365% at light load to 3.928% at heavy load. Both values are within acceptable ranges for real-time streaming applications.
+
+4. **Low jitter (< 1ms)** — confirms good streaming quality. ITU-T G.114 recommends jitter < 50 ms for VoIP; our results are well within this limit.
+
+5. **TCP and UDP can coexist** — at moderate UDP rates, both protocols share the bottleneck without significant interference.
+
+### Recommendations for Part III (QoS)
+
+- Implement **DiffServ** to prioritize UDP real-time traffic over TCP bulk transfer.
+- Apply **WRED** (Weighted Random Early Detection) to manage buffer occupancy at the bottleneck.
+- Mark UDP packets with **EF (Expedited Forwarding)** DSCP to guarantee low delay and jitter.
+
+---
+- Tanenbaum & Wetherall, *Computer Networks*, 5th ed., Pearson
