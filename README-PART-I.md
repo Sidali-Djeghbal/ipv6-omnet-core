@@ -80,22 +80,22 @@ Contains **4 configs** — each inheriting from `[General]`:
  
 #### `[Config RIPng]` — Distance-Vector routing (RFC 2080)
 ```ini
-**.r[*].hasRip          = true
-**.r[*].rip.mode        = "RIPng"
-**.r[*].rip.updateInterval   = 30s
-**.r[*].rip.routeExpiryTime  = 180s
-**.r[*].rip.routePurgeTime   = 120s
+*.r*.hasRip          = true
+*.r*.rip.mode        = "RIPng"
+*.r*.rip.updateInterval   = 30s
+*.r*.rip.routeExpiryTime  = 180s
+*.r*.rip.routePurgeTime   = 120s
 ```
 - Disables static routes — lets RIPng build the table dynamically
 - Converges in ~90–150s (hop-count metric)
  
 #### `[Config OSPFv3]` — Link-State routing (RFC 5340)
 ```ini
-**.r[*].hasOspf                 = true
-**.r[*].ospf.ospfConfig         = xmldoc("ospfv3_config.xml")
-**.r[*].ospf.helloInterval      = 10s
-**.r[*].ospf.deadInterval       = 40s
-**.r[*].ospf.retransmitInterval = 5s
+*.r*.hasOspf                 = true
+*.r*.ospf.ospfConfig         = xmldoc("ospfv3_config.xml")
+*.r*.ospf.helloInterval      = 10s
+*.r*.ospf.deadInterval       = 40s
+*.r*.ospf.retransmitInterval = 5s
 ```
 - All 6 routers in Area 0 (backbone)
 - Bottleneck link gets `metric=100` → OSPFv3 avoids it when possible
@@ -200,8 +200,8 @@ ipv6-omnet-core/
 * Uses hop count
 
 ```
-**.r[*].hasRip = true
-**.r[*].rip.mode = "RIPng"
+*.r*.hasRip = true
+*.r*.rip.mode = "RIPng"
 ```
 
 ---
@@ -214,8 +214,8 @@ ipv6-omnet-core/
 * Avoids bottleneck via high metric
 
 ```
-**.r[*].hasOspf = true
-**.r[*].ospf.ospfConfig = xmldoc("ospfv3_config.xml")
+*.r*.hasOspf = true
+*.r*.ospf.ospfConfig = xmldoc("ospfv3_config.xml")
 ```
 
 ---
