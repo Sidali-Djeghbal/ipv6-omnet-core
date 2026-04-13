@@ -11,6 +11,7 @@ results/
 *.vci 
 *.elog 
 *.pcap
+.nedignore
 # configurations
 .vscode/ 
 *.swp
