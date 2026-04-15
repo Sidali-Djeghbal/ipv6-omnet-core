@@ -137,7 +137,7 @@ To avoid Git merge conflicts, ensure a fair workload distribution, and foster co
       * *Option B (MPLS):* Simulate label switching behavior inspired by Multiprotocol Label Switching.
       * *Option C (Mobile Networks):* Simulate mobility scenarios inspired by GSM/UMTS and analyze handover effects on TCP/UDP performance.
   * **Deliverables:** Implementation and analytical report on the chosen advanced technology.
-  * **Assignees:** -
+  * **Assignees:** [@sidali-djeghbal](https://github.com/Sidali-Djeghbal)
 
 ### Part V – Data Analytics & Final Deliverables
 
@@ -148,7 +148,7 @@ To avoid Git merge conflicts, ensure a fair workload distribution, and foster co
       * Extract, compile, and analyze overall performance metrics from the OMNeT++ simulations: Throughput (bps), Packet loss ratio, End-to-end delay, Jitter, Routing convergence time, Link utilization, and Queue length evolution.
       * Apply analytical reasoning and networking theory to compare results quantitatively (no purely descriptive reporting).
   * **Deliverables:** The complete OMNeT++ Project Files (merged NED files, INI configurations, and any custom modules) and the final 15–25 page Technical Report (incorporating the theoretical background, network design, methodology, results, and critical analysis).
-  * **Assignees:**  [@sidali-djeghbal](https://github.com/Sidali-Djeghbal),
+  * **Assignees:** [@sidali-djeghbal](https://github.com/Sidali-Djeghbal), [@kheabdo](https://github.com/kheabdo), [@nerddude9000](https://github.com/nerddude9000)
 
 ## References & Documentation
 
