@@ -5,8 +5,8 @@ Server1 LAN,2001:db8:0:30::/64,Server1 eth0,R3 eth2,Server1 stub LAN
 Server2 LAN,2001:db8:0:40::/64,Server2 eth0,R6 eth2,Server2 stub LAN
 R1-R2 Core,2001:db8:0:12::/64,R1 eth1,R2 eth0,Top-row core link
 R2-R3 Core,2001:db8:0:23::/64,R2 eth1,R3 eth0,Top-row core link
-R4-R5 Core,2001:db8:0:45::/64,R4 eth2,R5 eth0,Bottom-row core link
-R5-R6 Core,2001:db8:0:56::/64,R5 eth2,R6 eth0,Bottom-row core link
-R1-R4 Cross,2001:db8:0:14::/64,R1 eth2,R4 eth1,Vertical redundancy link (left)
+R4-R5 Core,2001:db8:0:45::/64,R4 eth1,R5 eth0,Bottom-row core link
+R5-R6 Core,2001:db8:0:56::/64,R5 eth1,R6 eth0,Bottom-row core link
+R1-R4 Cross,2001:db8:0:14::/64,R1 eth2,R4 eth2,Vertical redundancy link (left)
 R3-R6 Cross,2001:db8:0:36::/64,R3 eth1,R6 eth1,Vertical redundancy link (right)
-R2-R5 Bottleneck,2001:db8:0:25::/64,R2 eth2,R5 eth1,BOTTLENECK — 10 Mbps / 20ms — congestion point for Parts II-III
+R2-R5 Bottleneck,2001:db8:0:25::/64,R2 eth2,R5 eth2,BOTTLENECK — 10 Mbps / 20ms — congestion point for Parts II-III

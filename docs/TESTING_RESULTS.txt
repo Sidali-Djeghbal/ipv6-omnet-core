@@ -1,48 +1,74 @@
 =============================================================
-  TEAM 01 — TESTING RESULTS
-  Part I: Network Architecture Design
-  Project: Advanced Networks Course Project (OMNeT++ / INET)
-  Team: @3boudi · @mamouneabdelli · @midouuk
-  Date: April 11, 2026
+  TESTING RESULTS (UPDATED)
+  Project: Advanced Networks Course Project (OMNeT++ / INET 4.6)
+  File: omnetpp.ini
+  Date: April 15, 2026
 =============================================================
 
--------------------------------------------------------------
-TEST 1 — RIPng Configuration
--------------------------------------------------------------
-Command : opp_run -u Cmdenv -c RIPng omnetpp.ini
-Status  : PASS
-Details :
-  - Simulation completed full 100s without errors
-  - RIPng enabled on all routers (r1..r6) via **.r[*] pattern
-  - Routing tables populated dynamically
-  - Result files generated:
-      results/RIPng-0.sca  (non-empty)
-      results/RIPng-0.vec  (non-empty)
+Environment
+  - OMNeT++ 6.3.0
+  - INET 4.6
+  - Runtime command: opp_run -u Cmdenv
+  - sim-time-limit: 400s
+
+OSPFv3 Configuration Note
+  - Active OSPFv3 setup uses ospfv3_splitter_config.xml via:
+      *.rX.ospf.ospfv3Splitter.ospfv3RoutingConfig
+      *.rX.ospf.ospfv3Splitter.ospfv3IntConfig
+  - Legacy ospfv3_config.xml is not used by omnetpp.ini.
 
 -------------------------------------------------------------
-TEST 2 — OSPFv3 Configuration
+FULL 400s VALIDATION — TARGET CONFIGS
 -------------------------------------------------------------
-Command : opp_run -u Cmdenv -c OSPFv3 omnetpp.ini
-Status  : PASS
-Details :
-  - Simulation completed full 100s without errors
-  - OSPFv3 enabled on all routers via **.r[*] pattern
-  - Inline config used (no external XML file required)
-  - Result files generated:
-      results/OSPFv3-0.sca  (non-empty)
-      results/OSPFv3-0.vec  (non-empty)
+
+[1] QoS_DiffServ_WRR
+  Status     : PASS
+  Exit code  : 0
+  Duration   : 43s
+  Run ID     : QoS_DiffServ_WRR-0-20260415-10:51:09-1418919
+  Outputs    : results/QoS_DiffServ_WRR-0.sca, results/QoS_DiffServ_WRR-0.vec
+
+[2] QoS_DiffServ_WRR_OSPFv3
+  Status     : PASS
+  Exit code  : 0
+  Duration   : 44s
+  Run ID     : QoS_DiffServ_WRR_OSPFv3-0-20260415-10:51:51-1419549
+  Outputs    : results/QoS_DiffServ_WRR_OSPFv3-0.sca, results/QoS_DiffServ_WRR_OSPFv3-0.vec
+
+[3] QoS_IntServ_RSVP
+  Status     : PASS
+  Exit code  : 0
+  Duration   : 43s
+  Run ID     : QoS_IntServ_RSVP-0-20260415-10:52:35-1420035
+  Outputs    : results/QoS_IntServ_RSVP-0.sca, results/QoS_IntServ_RSVP-0.vec
+
+[4] QoS_IntServ_RSVP_OSPFv3
+  Status     : PASS
+  Exit code  : 0
+  Duration   : 41s
+  Run ID     : QoS_IntServ_RSVP_OSPFv3-0-20260415-10:53:18-1420384
+  Outputs    : results/QoS_IntServ_RSVP_OSPFv3-0.sca, results/QoS_IntServ_RSVP_OSPFv3-0.vec
+
+[5] IPv6_Advanced_QoS
+  Status     : PASS
+  Exit code  : 0
+  Duration   : 42s
+  Run ID     : IPv6_Advanced_QoS-0-20260415-10:54:00-1420961
+  Outputs    : results/IPv6_Advanced_QoS-0.sca, results/IPv6_Advanced_QoS-0.vec
+
+[6] IPv6_Advanced_QoS_OSPFv3
+  Status     : PASS
+  Exit code  : 0
+  Duration   : 42s
+  Run ID     : IPv6_Advanced_QoS_OSPFv3-0-20260415-10:54:42-1421559
+  Outputs    : results/IPv6_Advanced_QoS_OSPFv3-0.sca, results/IPv6_Advanced_QoS_OSPFv3-0.vec
 
 -------------------------------------------------------------
-FIXES APPLIED BEFORE TESTING
+Baseline Sanity Checks
 -------------------------------------------------------------
-  [1] **.router* → **.r[*] in RIPng section
-  [2] **.router* → **.r[*] in OSPFv3 section
-  [3] TCP/UDP apps moved to [Config Part_II_Base]
-  [4] Removed non-existent RIPng vector signals
-  [5] Removed non-existent OSPFv3 vector signals
-  [6] Removed missing ospfv3_config.xml reference (inline only)
-  [7] Deleted Bottleneck_Study config (belongs to Part III)
+  - RIPng      : PASS (startup + execution)
+  - OSPFv3     : PASS (startup + execution)
 
 -------------------------------------------------------------
-OVERALL STATUS: READY FOR SUBMISSION
+OVERALL STATUS: PASS
 -------------------------------------------------------------

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Devices>
+    <Router id="r1">
+        <Routing6>
+            <OSPFv3>
+                <Process id="100">
+                    <RouterID>10.0.0.1</RouterID>
+                </Process>
+            </OSPFv3>
+        </Routing6>
+        <Interfaces>
+            <Interface name="eth0"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+            <Interface name="eth1"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+            <Interface name="eth2"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+        </Interfaces>
+    </Router>
+
+    <Router id="r2">
+        <Routing6>
+            <OSPFv3>
+                <Process id="100">
+                    <RouterID>10.0.0.2</RouterID>
+                </Process>
+            </OSPFv3>
+        </Routing6>
+        <Interfaces>
+            <Interface name="eth0"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+            <Interface name="eth1"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+            <Interface name="eth2"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area><InterfaceCost>100</InterfaceCost></Instance></Process></Interface>
+        </Interfaces>
+    </Router>
+
+    <Router id="r3">
+        <Routing6>
+            <OSPFv3>
+                <Process id="100">
+                    <RouterID>10.0.0.3</RouterID>
+                </Process>
+            </OSPFv3>
+        </Routing6>
+        <Interfaces>
+            <Interface name="eth0"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+            <Interface name="eth1"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+            <Interface name="eth2"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+        </Interfaces>
+    </Router>
+
+    <Router id="r4">
+        <Routing6>
+            <OSPFv3>
+                <Process id="100">
+                    <RouterID>10.0.0.4</RouterID>
+                </Process>
+            </OSPFv3>
+        </Routing6>
+        <Interfaces>
+            <Interface name="eth0"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+            <Interface name="eth1"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+            <Interface name="eth2"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+        </Interfaces>
+    </Router>
+
+    <Router id="r5">
+        <Routing6>
+            <OSPFv3>
+                <Process id="100">
+                    <RouterID>10.0.0.5</RouterID>
+                </Process>
+            </OSPFv3>
+        </Routing6>
+        <Interfaces>
+            <Interface name="eth0"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+            <Interface name="eth1"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+            <Interface name="eth2"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area><InterfaceCost>100</InterfaceCost></Instance></Process></Interface>
+        </Interfaces>
+    </Router>
+
+    <Router id="r6">
+        <Routing6>
+            <OSPFv3>
+                <Process id="100">
+                    <RouterID>10.0.0.6</RouterID>
+                </Process>
+            </OSPFv3>
+        </Routing6>
+        <Interfaces>
+            <Interface name="eth0"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+            <Interface name="eth1"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+            <Interface name="eth2"><Process id="100"><Instance AF="IPv6"><InterfaceType>Broadcast</InterfaceType><Area>0.0.0.0</Area></Instance></Process></Interface>
+        </Interfaces>
+    </Router>
+</Devices>
