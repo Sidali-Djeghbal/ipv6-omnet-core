@@ -26,20 +26,21 @@ channel LanLink extends ned.DatarateChannel
 {
     delay    = 2ms;
     datarate = 100Mbps;
+    @display("ls=#00aa00,3");   // Green, thickness 3
 }
 
 channel CoreLink extends ned.DatarateChannel
 {
     delay    = 10ms;
     datarate = 100Mbps;
+    @display("ls=#2255cc,2");   // Blue, thickness 2
 }
 
 channel BottleneckLink extends ned.DatarateChannel
 {
-    // This is the key congestion link — deliberately constrained.
-    // Part II / III teams will vary this bandwidth for experiments.
     delay    = 20ms;
-    datarate = 10Mbps;   // 10Mbps vs 100Mbps core = real bottleneck
+    datarate = 10Mbps;
+    @display("ls=#cc0000,4,da"); // Red, thickness 4, dashed
 }
 
 // ----------------------------------------------------------
